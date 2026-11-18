@@ -266,7 +266,13 @@ export default class Color {
 
   lab() {
     // Get the xyz color
-    const { x, y, z } = this.xyz()
+    const { x: X, y: Y, z: Z } = this.xyz()
+
+    // Normalise to the D65 white point and apply the nonlinear function
+    const f = (t) => (t > 0.008856 ? Math.pow(t, 1 / 3) : 7.787 * t + 16 / 116)
+    const x = f(X / 0.95047)
+    const y = f(Y / 1.0)
+    const z = f(Z / 1.08883)
 
     // Get the lab components
     const l = 116 * y - 16
@@ -418,15 +424,10 @@ export default class Color {
     const gL = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92
     const bL = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92
 
-    // Convert to the xyz color space without bounding the values
-    const xU = (rL * 0.4124 + gL * 0.3576 + bL * 0.1805) / 0.95047
-    const yU = (rL * 0.2126 + gL * 0.7152 + bL * 0.0722) / 1.0
-    const zU = (rL * 0.0193 + gL * 0.1192 + bL * 0.9505) / 1.08883
-
-    // Get the proper xyz values by applying the bounding
-    const x = xU > 0.008856 ? Math.pow(xU, 1 / 3) : 7.787 * xU + 16 / 116
-    const y = yU > 0.008856 ? Math.pow(yU, 1 / 3) : 7.787 * yU + 16 / 116
-    const z = zU > 0.008856 ? Math.pow(zU, 1 / 3) : 7.787 * zU + 16 / 116
+    // Convert to the xyz color space
+    const x = rL * 0.4124 + gL * 0.3576 + bL * 0.1805
+    const y = rL * 0.2126 + gL * 0.7152 + bL * 0.0722
+    const z = rL * 0.0193 + gL * 0.1192 + bL * 0.9505
 
     // Make and return the color
     const color = new Color(x, y, z, 'xyz')

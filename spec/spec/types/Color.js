@@ -267,51 +267,53 @@ describe('Color.js', () => {
       })
     })
 
-    // This conversion is pretty lossy
-    // Especially g is super wrong (which should be 0 at testing and is >170)
-    // describe('xyz()', () => {
+    describe('xyz()', () => {
+      it('can convert from rgb to xyz', () => {
+        const color = new Color(255, 0, 128)
+        const xyz = color.xyz()
+        expect(xyz.x).toBeCloseTo(0.451363, 6)
+        expect(xyz.y).toBeCloseTo(0.228185, 6)
+        expect(xyz.z).toBeCloseTo(0.224475, 6)
+        expect(xyz.space).toBe('xyz')
+      })
 
-    //   it('can convert from rgb to xyz', () => {
-    //     const color = new Color(255, 0, 128)
-    //     const xyz = color.xyz()
-    //     expect(xyz.x).toBeCloseTo(0.780182, 6)
-    //     expect(xyz.y).toBeCloseTo(0.611077, 6)
-    //     expect(xyz.z).toBeCloseTo(0.590749, 6)
-    //     expect(xyz.space).toBe('xyz')
-    //   })
+      it('can convert from xyz to rgb', () => {
+        const xyz = new Color(
+          0.4513628202705588,
+          0.22818512810822353,
+          0.22447540535826127,
+          'xyz'
+        )
+        const rgb = xyz.rgb()
+        expect(rgb.r).toBeCloseTo(255, 0)
+        expect(rgb.g).toBeCloseTo(0, 0)
+        expect(rgb.b).toBeCloseTo(128, 0)
+        expect(rgb.space).toBe('rgb')
+      })
 
-    //   it('can convert from xyz to rgb', () => {
-    //     const xyz = new Color(0.780181754521692, 0.6110767760212142, 0.590748864329329, 'xyz')
-    //     const rgb = xyz.rgb()
-    //     expect(rgb.r).toBeCloseTo(255, 0)
-    //     expect(rgb.g).toBeCloseTo(0, 0)
-    //     expect(rgb.b).toBeCloseTo(128, 0)
-    //     expect(rgb.space).toBe('rgb')
-    //   })
+      it('is invertable', () => {
+        const { r, g, b } = new Color(255, 0, 128).xyz().rgb()
+        expect(r).toBeCloseTo(255, 0)
+        expect(g).toBeCloseTo(0, 0)
+        expect(b).toBeCloseTo(128, 0)
+      })
 
-    //   it('is invertable', () => {
-    //     const { r, g, b } = new Color(255, 0, 128).xyz().rgb()
-    //     expect(r).toBeCloseTo(255, 0)
-    //     expect(g).toBeCloseTo(0, 0)
-    //     expect(b).toBeCloseTo(128, 0)
-    //   })
+      it('handles black', () => {
+        const color = new Color(0, 0, 0).xyz().rgb()
+        expect(color.r).toBeCloseTo(0, 0)
+        expect(color.g).toBeCloseTo(0, 0)
+        expect(color.b).toBeCloseTo(0, 0)
+        expect(color.toHex()).toBe('#000000')
+      })
 
-    //   it('handles black', () => {
-    //     const color = new Color(0, 0, 0).xyz().rgb()
-    //     expect(color.r).toBeCloseTo(0, 0)
-    //     expect(color.g).toBeCloseTo(0, 0)
-    //     expect(color.b).toBeCloseTo(0, 0)
-    //     expect(color.toHex()).toBe('#000000')
-    //   })
-
-    //   it('handles white', () => {
-    //     const color = new Color(255, 255, 255).xyz().rgb()
-    //     expect(color.r).toBeCloseTo(255, 0)
-    //     expect(color.g).toBeCloseTo(255, 0)
-    //     expect(color.b).toBeCloseTo(255, 0)
-    //     expect(color.toHex()).toBe('#ffffff')
-    //   })
-    // })
+      it('handles white', () => {
+        const color = new Color(255, 255, 255).xyz().rgb()
+        expect(color.r).toBeCloseTo(255, 0)
+        expect(color.g).toBeCloseTo(255, 0)
+        expect(color.b).toBeCloseTo(255, 0)
+        expect(color.toHex()).toBe('#ffffff')
+      })
+    })
 
     describe('cmyk()', () => {
       it('can convert from rgb to cmyk', () => {
